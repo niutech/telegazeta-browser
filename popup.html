@@ -27,11 +27,16 @@ img {
 input, select {
   font-family: inherit;
 }
+#loading {
+  position: absolute;
+  top: 6px;
+  right: 5px;
+}
   </style>
 </head>
 <body>
   <header>
-    <select id="channels" title="Kanał TV"></select><input type="button" id="home" value="100" title="Strona główna"><input type="button" id="prev" value="&laquo;" title="Poprzednia strona"><input type="button" id="prev_p" value="&lsaquo;" title="Poprzednia podstrona"><input type="text" id="page" value="" size="6" title="[Strona]-[Podstrona]"><input type="button" id="next_p" value="&rsaquo;" title="Następna podstrona"><input type="button" id="next" value="&raquo;" title="Następna strona">
+    <select id="channels" title="Kanał TV"></select><input type="button" id="home" value="100" title="Strona główna"><input type="button" id="prev" value="&laquo;" title="Poprzednia strona"><input type="button" id="prev_p" value="&lsaquo;" title="Poprzednia podstrona"><input type="text" id="page" value="" size="6" title="Strona-Podstrona"><input type="button" id="next_p" value="&rsaquo;" title="Następna podstrona"><input type="button" id="next" value="&raquo;" title="Następna strona"> <span id="loading"></span>
   </header>
   <img src="" alt="" width="480" height="336" crossorigin="anonymous" usemap="#links">
   <map name="links"></map>
@@ -94,7 +99,9 @@ var lDigits = [];
 var wDigits = [];
 var img = document.getElementsByTagName('img')[0];
 var map = document.getElementsByTagName('map')[0];
-var worker = new Worker('worker.js');
+var sWorker = new Worker('worker.js');
+var lWorker = new Worker('worker.js');
+var wWorker = new Worker('worker.js');
 var iCanvas = document.createElement('canvas');
 iCanvas.width = imgWidth;
 iCanvas.height = imgHeight;
@@ -124,10 +131,10 @@ function recognize() {
         pixels[i] = pixels[i + 1] = pixels[i + 2] = pixels[i] * .3 + pixels[i + 1] * .59 + pixels[i + 2] * .11 < 128 ? 0 : 255;
     }
     iCtx.putImageData(imgData, 0, 0);
-    worker.postMessage({pixels, digits: sDigits, width: imgWidth, height: imgHeight, digitWidth: sDigitWidth, digitHeight: sDigitHeight});
-    worker.postMessage({pixels, digits: lDigits, width: imgWidth, height: imgHeight, digitWidth: lDigitWidth, digitHeight: lDigitHeight});
-    worker.postMessage({pixels, digits: wDigits, width: imgWidth, height: imgHeight, digitWidth: wDigitWidth, digitHeight: wDigitHeight});
-    worker.onmessage = e => {
+    sWorker.postMessage({pixels, digits: sDigits, width: imgWidth, height: imgHeight, digitWidth: sDigitWidth, digitHeight: sDigitHeight});
+    lWorker.postMessage({pixels, digits: lDigits, width: imgWidth, height: imgHeight, digitWidth: lDigitWidth, digitHeight: lDigitHeight});
+    wWorker.postMessage({pixels, digits: wDigits, width: imgWidth, height: imgHeight, digitWidth: wDigitWidth, digitHeight: wDigitHeight});
+    sWorker.onmessage = lWorker.onmessage = wWorker.onmessage = e => {
         e.data.forEach(d => {
             var area = document.createElement('area');
             area.shape = 'rect';
@@ -137,6 +144,8 @@ function recognize() {
         });
     };
     map.innerHTML = '';
+    clearInterval(loadingInterval);
+    loading.innerText = '';
 }
 
 var ch = parseInt(location.hash.substring(1, 2)) || 0;
@@ -149,6 +158,8 @@ var prev = document.getElementById('prev');
 var prevP = document.getElementById('prev_p');
 var next = document.getElementById('next');
 var nextP = document.getElementById('next_p');
+var loading = document.getElementById('loading');
+var loadingInterval;
 
 function refresh() {
     ch = parseInt(location.hash.substring(1, 2)) || 0;
@@ -157,6 +168,9 @@ function refresh() {
     channelSel.value = ch;
     page.value = n + '-' + p;
     img.src = 'https://images.weserv.nl/?url=' + channels[ch].url + ('' + n)[0] + '00/' + n + '_00' + (p < 10 ? '0' : '') + p + '.png';
+    loading.innerText = n;
+    clearInterval(loadingInterval);
+    loadingInterval = setInterval(() => loading.innerText = loading.innerText >= 999 ? 100 : +loading.innerText + 1, 16);
 }
 
 channels.forEach((ch, i) => {
@@ -172,7 +186,11 @@ prev.onclick = () => location.hash = ch + '-' + (n > 100 ? n - 1 : 100) + '-1';
 prev_p.onclick = () => location.hash = ch + '-' + n + '-' + (p > 1 ? p - 1 : 1);
 next.onclick = () => location.hash = ch + '-' + (n + 1) + '-1';
 next_p.onclick = () => location.hash = ch + '-' + n + '-' + (p + 1);
-img.onerror = () => location.hash = ch + '-' + n + '-1';
+img.onerror = () => {
+    location.hash = ch + '-' + n + '-1';
+    clearInterval(loadingInterval);
+    loading.innerText = '';
+};
 img.onload = recognize;
 window.onhashchange = refresh;
 window.onload = refresh;
