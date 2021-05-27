@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Telegazeta Browser</title>
+  <style>
+@font-face {
+  font-family: "European Teletext";
+  src: url("font/european-teletext.woff2") format("woff2"), url("font/european-teletext.woff") format("woff"), url("font/european-teletext.ttf") format("truetype");
+}
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'European Teletext', sans-serif;
+  color: #fff;
+  background: #000;
+  text-align: center;
+}
+header {
+  margin: 5px;
+}
+img {
+  max-width: 100%;
+}
+input, select {
+  font-family: inherit;
+}
+  </style>
+</head>
+<body>
+  <header>
+    <select id="channels" title="Kanał TV"></select><input type="button" id="home" value="100" title="Strona główna"><input type="button" id="prev" value="&laquo;" title="Poprzednia strona"><input type="button" id="prev_p" value="&lsaquo;" title="Poprzednia podstrona"><input type="text" id="page" value="" size="6" title="[Strona]-[Podstrona]"><input type="button" id="next_p" value="&rsaquo;" title="Następna podstrona"><input type="button" id="next" value="&raquo;" title="Następna strona">
+  </header>
+  <img src="" alt="" width="480" height="336" crossorigin="anonymous" usemap="#links">
+  <map name="links"></map>
+  <script>
+var channels = [
+    {name: 'TVP 1', url: 'http://telegazeta.tvp.pl/sync/ncexp/TG1/'},
+    {name: 'TVP 2', url: 'http://telegazeta.tvp.pl/sync/ncexp/TG2/'},
+    {name: 'TVP Polonia', url: 'http://telegazeta.tvp.pl/sync/ncexp/SAT/'},
+    {name: 'TVP Kultura', url: 'http://telegazeta.tvp.pl/sync/ncexp/KUL/'},
+    {name: 'TVP Sport', url: 'http://telegazeta.tvp.pl/sync/ncexp/SPO/'},
+    {name: 'Polsat', url: 'http://gazetatvpolsat.pl/teletext/'},
+];
+var sDigitImgs = [
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAKAQAAAABOfkkTAAAAEUlEQVR42mNoaGCQYcCOGhoAK64C4TorG8IAAAAASUVORK5CYII=',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAKAQAAAABOfkkTAAAAFElEQVR42mN43MBwuIGhGYweoyMAvq8M/8c9FKoAAAAASUVORK5CYII=',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAKAQAAAABOfkkTAAAAIklEQVR42mNoaGAAAhsGhj8MDD8aGD42MDxuYDjewAAWBgB80QhMl1kKHQAAAABJRU5ErkJggg==',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAKAQAAAABOfkkTAAAAHUlEQVR42mNgAIM/DAw/Ghg+NjA8YGD4B0Yg0AAAaz0HQkrQHsYAAAAASUVORK5CYII=',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAKAQAAAABOfkkTAAAAIUlEQVR42mP4w8Dwo4HhYwPD4waG4w0MPQwMMgxQ8IcBAJ5ICDRdQrDIAAAAAElFTkSuQmCC',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAKAQAAAABOfkkTAAAAGklEQVR42mNgAAP7BhBiaACx/zEw2IEFGxoANY0EO9iIfnQAAAAASUVORK5CYII=',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAKAQAAAABOfkkTAAAAIElEQVR42mP42MDwuIHheANDfwNDQwMDEMiBERA0NAAAksAHZyC4SUUAAAAASUVORK5CYII=',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAKAQAAAABOfkkTAAAAHUlEQVR42mNgAIMfDQwfGxgeNzAcb2DoByN5EAIAfKUI8BdbNgcAAAAASUVORK5CYII=',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAKAQAAAABOfkkTAAAAF0lEQVR42mNoaGAAAhkwArKBCMJmAHEBQuYEcafDvXcAAAAASUVORK5CYII=',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAKAQAAAABOfkkTAAAAHklEQVR42mNoaGAAAhswAgIg90cDw8cGhscNDMcbAFdfCAzJg8bRAAAAAElFTkSuQmCC'
+];
+var lDigitImgs = [
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAUAQAAAAB3oir4AAAAE0lEQVR42mNoaGAAIhkG0hBYFwCtnAXBBl8lqAAAAABJRU5ErkJggg==',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAUAQAAAAB3oir4AAAAFUlEQVR42mN43MAARIfBqBkJPSaMAPegGf3jpkP6AAAAAElFTkSuQmCC',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAUAQAAAAB3oir4AAAAI0lEQVR42mNoaGAAIgiwAaM/YPSjAYQ+gtFjMDoORkC1MOUA78wQl9bjIy8AAAAASUVORK5CYII=',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAUAQAAAAB3oir4AAAAH0lEQVR42mNgQAJ/wOhHAwh9BKMHDCD0DwlBQQMQAQCohg6D1IEPiAAAAABJRU5ErkJggg==',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAUAQAAAAB3oir4AAAAIklEQVR42mP4w8AARD8aQOgjGD0Go+Ng1MMAQjJghAzAugB0zxBnTITWFAAAAABJRU5ErkJggg==',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAUAQAAAAB3oir4AAAAHUlEQVR42mNgQAL2DQjEAEFg8A+M7MAIAhoagAgA1b4IdeBu66IAAAAASUVORK5CYII=',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAUAQAAAAB3oir4AAAAH0lEQVR42mP42MAARI/B6DgY9YNRAxhBgBwSggCwLABJfA7NgFLSQQAAAABJRU5ErkJggg==',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAUAQAAAAB3oir4AAAAHElEQVR42mNgQAI/GkDoIxg9BqPjYNSPhOQRCADxeBHfN6whkwAAAABJRU5ErkJggg==',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAUAQAAAAB3oir4AAAAGklEQVR42mNoaGAAIgiQQUIQcQhCFocAsDgACvsI4T9vOcsAAAAASUVORK5CYII=',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAUAQAAAAB3oir4AAAAH0lEQVR42mNoaGAAIgiwQUIQAJH9AUYfwegxGB0HIQBbRBAXKadSTgAAAABJRU5ErkJggg=='
+];
+var wDigitImgs = [
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAKAQAAAACRMDMMAAAAFElEQVR42mM4wHCAgfkDA14MVAMA1CAKmeUW5RkAAAAASUVORK5CYII=',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAKAQAAAACRMDMMAAAAFUlEQVR42mP4w3+A4QMQH4DiP9gxAFnrEWu/e945AAAAAElFTkSuQmCC',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAKAQAAAACRMDMMAAAAJklEQVR42mM4wHCAAQT4PzAw/AfhAwcY/jMfYPjDf4Dhgz1MlgEAE5UNKpVJk/cAAAAASUVORK5CYII=',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAKAQAAAACRMDMMAAAAH0lEQVR42mNggIL/H4D4wAGG/8wHGP6A+H8gGAIOAADoMwvjMrfGYwAAAABJRU5ErkJggg==',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAKAQAAAACRMDMMAAAAJ0lEQVR42mP4/4GB4f+BAwz/mQ8w/OE/wPDB/gDDAaAYMxDDAFANAF+mDn0pRNHkAAAAAElFTkSuQmCC',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAKCAAAAACcIFF9AAAAG0lEQVQY02NgIBr8RwG4hFB1EGkOqjBuB6DzAcIVOccMce+wAAAAAElFTkSuQmCC',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAKAQAAAACRMDMMAAAAI0lEQVR42mP4z3yA4Q//AYYP9gcYDvwHYiAEAeY/EAwCQDEAN3oM+jkn11wAAAAASUVORK5CYII=',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAKAQAAAACRMDMMAAAAI0lEQVR42mNggIL/Bw4w/Gc+wPCH/wDDB/sDDAf+QzAzBAMADHUQfjQQkFkAAAAASUVORK5CYII=',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAKAQAAAACRMDMMAAAAGklEQVR42mM4wHCAAQSYP0DwASiE8UEAyAcAxCQJzaYR45EAAAAASUVORK5CYII=',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAKAQAAAACRMDMMAAAAJElEQVR42mM4wHCAAQT4P0AwCIDE/h8AYuYDDH/4DzB8sD8AANAeDPr6sGVxAAAAAElFTkSuQmCC'
+];
+var imgWidth = 480;
+var imgHeight = 336;
+var sDigitWidth = 9;
+var sDigitHeight = 10;
+var lDigitWidth = 9;
+var lDigitHeight = 20;
+var wDigitWidth = 18;
+var wDigitHeight = 10;
+var sDigits = [];
+var lDigits = [];
+var wDigits = [];
+var img = document.getElementsByTagName('img')[0];
+var map = document.getElementsByTagName('map')[0];
+var worker = new Worker('worker.js');
+var iCanvas = document.createElement('canvas');
+iCanvas.width = imgWidth;
+iCanvas.height = imgHeight;
+var dCanvas = document.createElement('canvas');
+dCanvas.width = wDigitWidth;
+dCanvas.height = lDigitHeight;
+var iCtx = iCanvas.getContext('2d');
+var dCtx = dCanvas.getContext('2d');
+
+function convert(img, size) {
+    var i = new Image;
+    i.onload = () => {
+        dCtx.drawImage(i, 0, 0);
+        this[size + 'Digits'].push(dCtx.getImageData(0, 0, this[size + 'DigitWidth'], this[size + 'DigitHeight']).data);
+    };
+    i.src = img;
+}
+sDigitImgs.forEach(img => convert(img, 's'));
+lDigitImgs.forEach(img => convert(img, 'l'));
+wDigitImgs.forEach(img => convert(img, 'w'));
+
+function recognize() {
+    iCtx.drawImage(img, 0, 0);
+    var imgData = iCtx.getImageData(0, 0, imgWidth, imgHeight);
+    var pixels = imgData.data;
+    for (var i = 0; i < pixels.length; i += 4) {
+        pixels[i] = pixels[i + 1] = pixels[i + 2] = pixels[i] * .51 + pixels[i + 1] * .59 + pixels[i + 2] * .11 < 128 ? 0 : 255;
+    }
+    iCtx.putImageData(imgData, 0, 0);
+    worker.postMessage({pixels, digits: sDigits, width: imgWidth, height: imgHeight, digitWidth: sDigitWidth, digitHeight: sDigitHeight});
+    worker.postMessage({pixels, digits: lDigits, width: imgWidth, height: imgHeight, digitWidth: lDigitWidth, digitHeight: lDigitHeight});
+    worker.postMessage({pixels, digits: wDigits, width: imgWidth, height: imgHeight, digitWidth: wDigitWidth, digitHeight: wDigitHeight});
+    worker.onmessage = e => {
+        e.data.forEach(d => {
+            var area = document.createElement('area');
+            area.shape = 'rect';
+            area.coords = d.x + ',' + d.y + ',' + (d.x + d.w) + ',' + (d.y + d.h);
+            area.href = '#' + ch + '-' + d.n + '-1';
+            map.appendChild(area);
+        });
+    };
+    map.innerHTML = '';
+}
+
+var ch = parseInt(location.hash.substring(1, 2)) || 0;
+var n = parseInt(location.hash.substring(3, 6)) || 100;
+var p = parseInt(location.hash.substring(7)) || 1;
+var channelSel = document.getElementById('channels');
+var home = document.getElementById('home');
+var page = document.getElementById('page');
+var prev = document.getElementById('prev');
+var prevP = document.getElementById('prev_p');
+var next = document.getElementById('next');
+var nextP = document.getElementById('next_p');
+
+function refresh() {
+    ch = parseInt(location.hash.substring(1, 2)) || 0;
+    n = parseInt(location.hash.substring(3, 6)) || 100;
+    p = parseInt(location.hash.substring(7)) || 1;
+    channelSel.value = ch;
+    page.value = n + '-' + p;
+    img.src = 'https://images.weserv.nl/?url=' + channels[ch].url + ('' + n)[0] + '00/' + n + '_00' + (p < 10 ? '0' : '') + p + '.png';
+}
+
+channels.forEach((ch, i) => {
+    var o = document.createElement('option');
+    o.value = i;
+    o.innerText = ch.name;
+    channelSel.appendChild(o);
+});
+channelSel.onchange = () => location.hash = channelSel.value + '-100-1';
+page.onchange = () => location.hash = ch + '-' + page.value;
+home.onclick = () => location.hash = ch + '-100-1';
+prev.onclick = () => location.hash = ch + '-' + (n > 100 ? n - 1 : 100) + '-1';
+prev_p.onclick = () => location.hash = ch + '-' + n + '-' + (p > 1 ? p - 1 : 1);
+next.onclick = () => location.hash = ch + '-' + (n + 1) + '-1';
+next_p.onclick = () => location.hash = ch + '-' + n + '-' + (p + 1);
+img.onerror = () => location.hash = ch + '-' + n + '-1';
+img.onload = recognize;
+window.onhashchange = refresh;
+window.onload = refresh;
+  </script>
+</body>
+</html>
