@@ -119,7 +119,7 @@ function recognize() {
     var imgData = iCtx.getImageData(0, 0, imgWidth, imgHeight);
     var pixels = imgData.data;
     for (var i = 0; i < pixels.length; i += 4) {
-        pixels[i] = pixels[i + 1] = pixels[i + 2] = pixels[i] * .51 + pixels[i + 1] * .59 + pixels[i + 2] * .11 < 128 ? 0 : 255;
+        pixels[i] = pixels[i + 1] = pixels[i + 2] = pixels[i] * .3 + pixels[i + 1] * .59 + pixels[i + 2] * .11 < 128 ? 0 : 255;
     }
     iCtx.putImageData(imgData, 0, 0);
     worker.postMessage({pixels, digits: sDigits, width: imgWidth, height: imgHeight, digitWidth: sDigitWidth, digitHeight: sDigitHeight});
