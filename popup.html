@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
+  <meta name="viewport" content="width=480">
   <title>Telegazeta Browser</title>
   <link rel="shortcut icon" href="favicon.ico">
   <style>
@@ -21,9 +21,6 @@ body {
 header {
   margin: 5px;
 }
-img {
-  max-width: 100%;
-}
 input, select {
   font-family: inherit;
 }
@@ -38,7 +35,7 @@ input, select {
   <header>
     <select id="channels" title="Kanał TV"></select><input type="button" id="home" value="100" title="Strona główna"><input type="button" id="prev" value="&laquo;" title="Poprzednia strona"><input type="button" id="prev_p" value="&lsaquo;" title="Poprzednia podstrona"><input type="text" id="page" value="" size="6" title="Strona-Podstrona"><input type="button" id="next_p" value="&rsaquo;" title="Następna podstrona"><input type="button" id="next" value="&raquo;" title="Następna strona"> <span id="loading"></span>
   </header>
-  <img src="" alt="" width="480" height="336" crossorigin="anonymous" usemap="#links">
+  <img src="" alt="Brak podanej strony" width="480" height="336" crossorigin="anonymous" usemap="#links">
   <map name="links"></map>
   <script>
 var channels = [
