@@ -19,14 +19,16 @@ body {
   text-align: center;
 }
 header {
-  margin: 5px;
+  position: relative;
+  margin: 5px auto;
+  width: 480px;
 }
 input, select {
   font-family: inherit;
 }
 #loading {
   position: absolute;
-  top: 6px;
+  top: 2px;
   right: 5px;
 }
   </style>
@@ -164,7 +166,7 @@ function refresh() {
     p = parseInt(location.hash.substring(7)) || 1;
     channelSel.value = ch;
     page.value = n + '-' + p;
-    img.src = 'https://images.weserv.nl/?url=' + channels[ch].url + ('' + n)[0] + '00/' + n + '_00' + (p < 10 ? '0' : '') + p + '.png';
+    img.src = 'https://images.weserv.nl/?url=' + channels[ch].url + ('' + n)[0] + '00/' + n + '_00' + (p < 10 ? '0' : '') + p + '.png&maxage=1d';
     loading.innerText = n;
     clearInterval(loadingInterval);
     loadingInterval = setInterval(() => loading.innerText = loading.innerText >= 999 ? 100 : +loading.innerText + 1, 16);
