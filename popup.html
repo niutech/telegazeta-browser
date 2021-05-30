@@ -13,7 +13,7 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: 'European Teletext', sans-serif;
+  font: 14px 'European Teletext', sans-serif;
   color: #fff;
   background: #000;
   text-align: center;
@@ -25,6 +25,7 @@ header {
 }
 input, select {
   font-family: inherit;
+  border: 1px solid;
 }
 #loading {
   position: absolute;
@@ -35,7 +36,7 @@ input, select {
 </head>
 <body>
   <header>
-    <select id="channels" title="Kanał TV"></select><input type="button" id="home" value="100" title="Strona główna"><input type="button" id="prev" value="&laquo;" title="Poprzednia strona"><input type="button" id="prev_p" value="&lsaquo;" title="Poprzednia podstrona"><input type="text" id="page" value="" size="6" title="Strona-Podstrona"><input type="button" id="next_p" value="&rsaquo;" title="Następna podstrona"><input type="button" id="next" value="&raquo;" title="Następna strona"> <span id="loading"></span>
+    <input type="button" id="back" value="&#8592;" title="Wstecz"><select id="channels" title="Kanał TV"></select><input type="button" id="home" value="100" title="Strona główna"><input type="button" id="prev" value="&laquo;" title="Poprzednia strona"><input type="button" id="prev_p" value="&lsaquo;" title="Poprzednia podstrona"><input type="text" id="page" value="" size="6" title="Strona-Podstrona"><input type="button" id="next_p" value="&rsaquo;" title="Następna podstrona"><input type="button" id="next" value="&raquo;" title="Następna strona"> <span id="loading"></span>
   </header>
   <img src="" alt="Brak podanej strony" width="480" height="336" crossorigin="anonymous" usemap="#links">
   <map name="links"></map>
@@ -150,6 +151,7 @@ function recognize() {
 var ch = parseInt(location.hash.substring(1, 2)) || 0;
 var n = parseInt(location.hash.substring(3, 6)) || 100;
 var p = parseInt(location.hash.substring(7)) || 1;
+var back = document.getElementById('back');
 var channelSel = document.getElementById('channels');
 var home = document.getElementById('home');
 var page = document.getElementById('page');
@@ -166,7 +168,7 @@ function refresh() {
     p = parseInt(location.hash.substring(7)) || 1;
     channelSel.value = ch;
     page.value = n + '-' + p;
-    img.src = 'https://images.weserv.nl/?url=' + channels[ch].url + ('' + n)[0] + '00/' + n + '_00' + (p < 10 ? '0' : '') + p + '.png&maxage=1d';
+    img.src = 'https://images.weserv.nl/?url=' + channels[ch].url + ('' + n)[0] + '00/' + n + '_00' + (p < 10 ? '0' : '') + p + '.png&maxage=31d&' + new Date().getDate();
     loading.innerText = n;
     clearInterval(loadingInterval);
     loadingInterval = setInterval(() => loading.innerText = loading.innerText >= 999 ? 100 : +loading.innerText + 1, 16);
@@ -178,6 +180,7 @@ channels.forEach((ch, i) => {
     o.innerText = ch.name;
     channelSel.appendChild(o);
 });
+back.onclick = () => history.back();
 channelSel.onchange = () => location.hash = channelSel.value + '-100-1';
 page.onchange = () => location.hash = ch + '-' + page.value;
 home.onclick = () => location.hash = ch + '-100-1';
