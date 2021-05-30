@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=480">
+  <meta name="viewport" content="width=device-width">
   <title>Telegazeta Browser</title>
   <link rel="shortcut icon" href="favicon.ico">
   <style>
@@ -21,7 +21,7 @@ body {
 header {
   position: relative;
   margin: 5px auto;
-  width: 480px;
+  max-width: 480px;
 }
 input, select {
   font-family: inherit;
@@ -31,6 +31,9 @@ input, select {
   position: absolute;
   top: 2px;
   right: 5px;
+}
+img {
+  max-width: 100%;
 }
   </style>
 </head>
@@ -124,6 +127,7 @@ lDigitImgs.forEach(img => convert(img, 'l'));
 wDigitImgs.forEach(img => convert(img, 'w'));
 
 function recognize() {
+    var width = img.width;
     iCtx.drawImage(img, 0, 0);
     var imgData = iCtx.getImageData(0, 0, imgWidth, imgHeight);
     var pixels = imgData.data;
@@ -138,7 +142,7 @@ function recognize() {
         e.data.forEach(d => {
             var area = document.createElement('area');
             area.shape = 'rect';
-            area.coords = d.x + ',' + d.y + ',' + (d.x + d.w) + ',' + (d.y + d.h);
+            area.coords = d.x * width / imgWidth + ',' + d.y + ',' + (d.x + d.w) * width / imgWidth + ',' + (d.y + d.h);
             area.href = '#' + ch + '-' + d.n + '-1';
             map.appendChild(area);
         });
