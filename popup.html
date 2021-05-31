@@ -63,7 +63,8 @@ var sDigitImgs = [
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAKAQAAAABOfkkTAAAAIElEQVR42mP42MDwuIHheANDfwNDQwMDEMiBERA0NAAAksAHZyC4SUUAAAAASUVORK5CYII=',
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAKAQAAAABOfkkTAAAAHUlEQVR42mNgAIMfDQwfGxgeNzAcb2DoByN5EAIAfKUI8BdbNgcAAAAASUVORK5CYII=',
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAKAQAAAABOfkkTAAAAF0lEQVR42mNoaGAAAhkwArKBCMJmAHEBQuYEcafDvXcAAAAASUVORK5CYII=',
-    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAKAQAAAABOfkkTAAAAHklEQVR42mNoaGAAAhswAgIg90cDw8cGhscNDMcbAFdfCAzJg8bRAAAAAElFTkSuQmCC'
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAKAQAAAABOfkkTAAAAHklEQVR42mNoaGAAAhswAgIg90cDw8cGhscNDMcbAFdfCAzJg8bRAAAAAElFTkSuQmCC',
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAKAQAAAABOfkkTAAAAIElEQVR42mP438Bg38DA38BwuIHhYwPDDzB5GCxi3wAAq0kK/DusloAAAAAASUVORK5CYII='
 ];
 var lDigitImgs = [
     'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAUAQAAAAB3oir4AAAAE0lEQVR42mNoaGAAIhkG0hBYFwCtnAXBBl8lqAAAAABJRU5ErkJggg==',
@@ -143,7 +144,7 @@ function recognize() {
             var area = document.createElement('area');
             area.shape = 'rect';
             area.coords = d.x * width / imgWidth + ',' + d.y + ',' + (d.x + d.w) * width / imgWidth + ',' + (d.y + d.h);
-            area.href = '#' + ch + '-' + d.n + '-1';
+            area.href = '#' + ch + '-' + (d.n == 1110 ? n + '-' + (p + 1) : d.n + '-1');
             map.appendChild(area);
         });
     };
@@ -189,9 +190,9 @@ channelSel.onchange = () => location.hash = channelSel.value + '-100-1';
 page.onchange = () => location.hash = ch + '-' + page.value;
 home.onclick = () => location.hash = ch + '-100-1';
 prev.onclick = () => location.hash = ch + '-' + (n > 100 ? n - 1 : 100) + '-1';
-prev_p.onclick = () => location.hash = ch + '-' + n + '-' + (p > 1 ? p - 1 : 1);
+prevP.onclick = () => location.hash = ch + '-' + n + '-' + (p > 1 ? p - 1 : 1);
 next.onclick = () => location.hash = ch + '-' + (n + 1) + '-1';
-next_p.onclick = () => location.hash = ch + '-' + n + '-' + (p + 1);
+nextP.onclick = () => location.hash = ch + '-' + n + '-' + (p + 1);
 img.onerror = () => {
     location.hash = ch + '-' + n + '-1';
     clearInterval(loadingInterval);
