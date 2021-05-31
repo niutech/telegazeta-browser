@@ -22,10 +22,25 @@ button {
   font-family: inherit;
   border: 1px solid;
 }
+img {
+  vertical-align: top;
+  margin: 5px;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+#footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
   </style>
 </head>
 <body>
   <h1>Telegazeta Browser</h1>
   <p><button onclick="window.open('popup.html', '_blank', 'innerWidth=480,innerHeight=380,menubar=no,toolbar=no,location=no,resizable=no,scrollbars=no,status=no,dialog=yes');" title="Otwórz Telegazetę w oknie pop-up"><img src="favicon.ico" alt="Otwórz Telegazetę w oknie pop-up"></button></p>
+  <p id="footer">made by <a href="https://niute.ch" target="_blank">niu tech</a> | <a href="https://github.com/niutech/telegazeta-browser" target="_blank">github</a></p>
 </body>
 </html>
