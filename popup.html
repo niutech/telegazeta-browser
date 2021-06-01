@@ -24,8 +24,11 @@ header {
   max-width: 480px;
 }
 input, select {
-  font-family: inherit;
+  height: 20px;
+  box-sizing: border-box;
   border: 1px solid;
+  font-family: inherit;
+  vertical-align: top;
 }
 #loading {
   position: absolute;
@@ -191,7 +194,7 @@ page.onchange = () => location.hash = ch + '-' + page.value;
 home.onclick = () => location.hash = ch + '-100-1';
 prev.onclick = () => location.hash = ch + '-' + (n > 100 ? n - 1 : 100) + '-1';
 prevP.onclick = () => location.hash = ch + '-' + n + '-' + (p > 1 ? p - 1 : 1);
-next.onclick = () => location.hash = ch + '-' + (n + 1) + '-1';
+next.onclick = () => location.hash = ch + '-' + (n < 999 ? n + 1 : 100) + '-1';
 nextP.onclick = () => location.hash = ch + '-' + n + '-' + (p + 1);
 img.onerror = () => {
     location.hash = ch + '-' + n + '-1';
