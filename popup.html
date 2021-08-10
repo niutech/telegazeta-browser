@@ -176,7 +176,7 @@ function refresh() {
     p = parseInt(location.hash.substring(7)) || 1;
     channelSel.value = ch;
     page.value = n + '-' + p;
-    img.src = 'https://images.weserv.nl/?url=' + channels[ch].url + ('' + n)[0] + '00/' + n + '_00' + (p < 10 ? '0' : '') + p + '.png&maxage=31d&' + new Date().getDate();
+    img.src = 'https://images.weserv.nl/?url=' + channels[ch].url + ('' + n)[0] + '00/' + n + '_00' + (p < 10 ? '0' : '') + p + '.png&maxage=1d';
     loading.innerText = n;
     clearInterval(loadingInterval);
     loadingInterval = setInterval(() => loading.innerText = loading.innerText >= 999 ? 100 : +loading.innerText + 1, 16);
